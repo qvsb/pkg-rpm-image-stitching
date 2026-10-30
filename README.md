@@ -9,13 +9,14 @@ development headers.
 
 This repository packages the `qcom-image-stitching` RPM from the
 `image-stitching` prebuilt binary release. The
-runtime package contains `libimage_stitching.so` and the `nv12_blend.cl`
-OpenCL kernel. The `qcom-image-stitching-devel` package contains the public
-`image_stitching.h` and `mesh_fusion.h` headers.
+runtime package contains the versioned `libimage_stitching.so.1` shared
+library. The `qcom-image-stitching-devel` package contains the public
+`image_stitching.h` and `mesh_fusion.h` headers and the `libimage_stitching.so`
+linker symlink.
 
 The prebuilt archive is fetched during the RPM build from Qualcomm Software
 Center. This repository contains no compiled libraries, binaries, or source
-archives. The `meta-aimm-fwks.lnx.0.0` component release dated `261006` is
+archives. The `iot-core-algs.lnx.0.0` component release dated `261029` is
 referenced by `Source0` in the spec, and the checksum in `sources` is verified
 before the RPM is built.
 
@@ -34,15 +35,15 @@ before the RPM is built.
 
 ### `qcom-image-stitching`
 
-Runtime package containing the prebuilt image-stitching shared library and its
-OpenCL kernel under `/usr/lib64/image_stitching`. The shared library uses
+Runtime package containing the prebuilt image-stitching shared library
+`/usr/lib64/libimage_stitching.so.1`. The shared library uses
 OpenCV and OpenCL runtime libraries supplied by the target Qualcomm Linux
 image; its ELF dependencies are recorded automatically by RPM.
 
 ### `qcom-image-stitching-devel`
 
-Development package providing the public headers under
-`/usr/include/image_stitching`.
+Development package providing the public headers in `/usr/include` and the
+`/usr/lib64/libimage_stitching.so` linker symlink.
 
 The packages are built for `aarch64`; the vendor archive is not compiled or
 stripped during the RPM build.

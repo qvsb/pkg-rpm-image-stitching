@@ -1,9 +1,7 @@
 # RPM packaging for the image-stitching prebuilt binary drop.
 
 %global vendor_arch             armv8a
-%global vendor_build_date       261006
-%global image_stitching_libdir %{_libdir}/image_stitching
-%global image_stitching_incdir %{_includedir}/image_stitching
+%global vendor_build_date       261029
 
 # Keep the vendor aarch64 payload unchanged; the archive is not rebuilt here.
 %global debug_package                   %{nil}
@@ -20,15 +18,15 @@ Summary:        QCOM Dynamic Image Stitching Library
 
 License:         BSD-3-Clause-Clear
 
-Source0:        https://softwarecenter.qualcomm.com/nexus/generic/software/chip/component/meta-aimm-fwks.lnx.0.0/%{vendor_build_date}/prebuilt_yocto/image-stitching_%{version}_%{vendor_arch}.tar.gz
+Source0:        https://softwarecenter.qualcomm.com/nexus/generic/software/chip/component/iot-core-algs.lnx.0.0/%{vendor_build_date}/prebuilt_yocto/image-stitching_%{version}_%{vendor_arch}.tar.gz
 
 ExclusiveArch:  aarch64
 
 %description
 QCOM library for dynamic image stitching with OpenCV and OpenCL support.
 
-The package contains the prebuilt image-stitching shared library and its
-runtime OpenCL kernel for Qualcomm platforms.
+The package contains the prebuilt image-stitching shared library for
+Qualcomm platforms.
 
 %package devel
 Summary:        QCOM Dynamic Image Stitching Library - Development files
@@ -36,18 +34,18 @@ Requires:       %{name}%{?_isa} = %{version}-%{release}
 Provides:       qcom-image-stitching-dev = %{version}-%{release}
 
 %description devel
-Development headers for the QCOM dynamic image-stitching library.
+Development headers and the unversioned linker symlink for the QCOM dynamic
+image-stitching library.
 
 %prep
 %autosetup -c -n %{name}-%{version} -p1
 
 for f in LICENSE.qcom-2 \
-         usr/include/image_stitching/image_stitching.h \
-         usr/include/image_stitching/mesh_fusion.h \
-         usr/lib/image_stitching/libimage_stitching.so \
-         usr/lib/image_stitching/nv12_blend.cl; do
+         usr/include/image_stitching.h \
+         usr/include/mesh_fusion.h \
+         usr/lib/libimage_stitching.so.1.0; do
     if [ ! -e "$f" ]; then
-        echo "ERROR: expected '$f' in %{name}_%{version}_%{vendor_arch}.tar.gz" >&2
+        echo "ERROR: expected '$f' in image-stitching_%{version}_%{vendor_arch}.tar.gz" >&2
         echo "ERROR: the vendor tarball layout changed; update this spec." >&2
         exit 1
     fi
@@ -56,15 +54,15 @@ done
 %build
 
 %install
-install -d -m 0755 %{buildroot}%{image_stitching_libdir}
-install -d -m 0755 %{buildroot}%{image_stitching_incdir}
+install -d -m 0755 %{buildroot}%{_libdir}
+install -d -m 0755 %{buildroot}%{_includedir}
 
-install -p -m 0755 usr/lib/image_stitching/libimage_stitching.so \
-    %{buildroot}%{image_stitching_libdir}/libimage_stitching.so
-install -p -m 0644 usr/lib/image_stitching/nv12_blend.cl \
-    %{buildroot}%{image_stitching_libdir}/nv12_blend.cl
-install -p -m 0644 usr/include/image_stitching/*.h \
-    %{buildroot}%{image_stitching_incdir}/
+install -p -m 0755 usr/lib/libimage_stitching.so.1.0 \
+    %{buildroot}%{_libdir}/libimage_stitching.so.1.0
+ln -s libimage_stitching.so.1.0 %{buildroot}%{_libdir}/libimage_stitching.so.1
+ln -s libimage_stitching.so.1 %{buildroot}%{_libdir}/libimage_stitching.so
+install -p -m 0644 usr/include/image_stitching.h usr/include/mesh_fusion.h \
+    %{buildroot}%{_includedir}/
 
 %check
 :
@@ -75,14 +73,13 @@ install -p -m 0644 usr/include/image_stitching/*.h \
 
 %files
 %license LICENSE.qcom-2
-%dir %{image_stitching_libdir}
-%{image_stitching_libdir}/libimage_stitching.so
-%{image_stitching_libdir}/nv12_blend.cl
+%{_libdir}/libimage_stitching.so.1
+%{_libdir}/libimage_stitching.so.1.0
 
 %files devel
-%dir %{image_stitching_incdir}
-%{image_stitching_incdir}/image_stitching.h
-%{image_stitching_incdir}/mesh_fusion.h
+%{_libdir}/libimage_stitching.so
+%{_includedir}/image_stitching.h
+%{_includedir}/mesh_fusion.h
 
 %changelog
 * Fri Oct 09 2026 Qualcomm Linux Packaging <linux@qti.qualcomm.com> - 1.0.0-1
