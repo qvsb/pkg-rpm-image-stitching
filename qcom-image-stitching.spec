@@ -1,7 +1,7 @@
 # RPM packaging for the image-stitching prebuilt binary drop.
 
-%global vendor_arch             armv8a
-%global vendor_build_date       261029
+%global vendor_arch             aarch64
+%global vendor_build_date       261110
 
 # Keep the vendor aarch64 payload unchanged; the archive is not rebuilt here.
 %global debug_package                   %{nil}
@@ -18,7 +18,7 @@ Summary:        QCOM Dynamic Image Stitching Library
 
 License:         BSD-3-Clause-Clear
 
-Source0:        https://softwarecenter.qualcomm.com/nexus/generic/software/chip/component/iot-core-algs.lnx.0.0/%{vendor_build_date}/prebuilt_yocto/image-stitching_%{version}_%{vendor_arch}.tar.gz
+Source0:        https://softwarecenter.qualcomm.com/nexus/generic/software/chip/component/iot-core-algs.lnx.0.0/%{vendor_build_date}/prebuilt_c10s/image-stitching_%{version}_%{vendor_arch}.tar.gz
 
 ExclusiveArch:  aarch64
 
